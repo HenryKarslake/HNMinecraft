@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minecraft Item Value Calculator</title>
+    <title>Minecraft Tools Hub</title>
     <style>
         * {
             margin: 0;
@@ -15,536 +15,126 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 20px;
         }
 
         .container {
             max-width: 900px;
-            margin: 0 auto;
+            width: 100%;
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             overflow: hidden;
         }
 
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 30px;
+            padding: 50px 30px;
             text-align: center;
         }
 
         .header h1 {
-            font-size: 28px;
+            font-size: 48px;
             margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .header p {
+            font-size: 18px;
             opacity: 0.9;
         }
 
         .content {
+            padding: 50px 30px;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .tool-card {
+            background: #f9f9f9;
+            border: 2px solid #ddd;
+            border-radius: 10px;
             padding: 30px;
-        }
-
-        .search-section {
-            margin-bottom: 30px;
-        }
-
-        .search-box {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .search-box input {
-            flex: 1;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        .search-box input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .search-box button {
-            padding: 12px 25px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-
-        .search-box button:hover {
-            background: #764ba2;
-        }
-
-        .suggestions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            max-height: 200px;
-            overflow-y: auto;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 10px;
-            background: #f9f9f9;
-        }
-
-        .suggestion-item {
-            padding: 6px 12px;
-            background: #e8e8f0;
-            border: 1px solid #ccc;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 13px;
-            transition: all 0.2s;
-        }
-
-        .suggestion-item:hover {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
-        }
-
-        .calculator-section {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 15px;
-            align-items: flex-end;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-
-        .input-field {
-            flex: 1;
-            min-width: 150px;
-        }
-
-        .input-field label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: bold;
-            color: #333;
-            font-size: 14px;
-        }
-
-        .input-field input {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        .input-field input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .calc-button {
-            padding: 10px 25px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-
-        .calc-button:hover {
-            background: #764ba2;
-        }
-
-        .calc-button:active {
-            transform: scale(0.98);
-        }
-
-        .results {
-            background: white;
-            border: 2px solid #667eea;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .results.show {
-            display: block;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .result-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .result-row:last-child {
-            border-bottom: none;
-        }
-
-        .result-label {
-            font-weight: bold;
-            color: #333;
-        }
-
-        .result-value {
-            color: #667eea;
-            font-weight: bold;
-            font-size: 16px;
-        }
-
-        .total-row {
-            background: #f0f4ff;
-            border-radius: 5px;
-            margin-top: 15px;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 18px;
-        }
-
-        .total-label {
-            font-weight: bold;
-        }
-
-        .total-value {
-            color: #764ba2;
-            font-weight: bold;
-        }
-
-        .error {
-            color: #d32f2f;
-            padding: 12px;
-            background: #ffebee;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            display: none;
-        }
-
-        .error.show {
-            display: block;
-        }
-
-        .categories {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .category-btn {
-            padding: 10px;
-            background: white;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 13px;
-            transition: all 0.2s;
-        }
-
-        .category-btn:hover {
-            border-color: #667eea;
-            color: #667eea;
-        }
-
-        .category-btn.active {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-            border-bottom: 2px solid #eee;
-        }
-
-        .tab-button {
-            padding: 12px 20px;
-            background: none;
-            border: none;
-            border-bottom: 3px solid transparent;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: bold;
-            color: #999;
-            transition: all 0.3s;
-        }
-
-        .tab-button.active {
-            color: #667eea;
-            border-bottom-color: #667eea;
-        }
-
-        .tab-button:hover {
-            color: #667eea;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .trading-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            align-items: start;
-        }
-
-        .trade-side {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            border: 2px solid #ddd;
-            transition: border-color 0.3s;
-        }
-
-        .trade-side.offering {
-            border-color: #ff6b6b;
-        }
-
-        .trade-side.receiving {
-            border-color: #51cf66;
-        }
-
-        .trade-side h3 {
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 16px;
-        }
-
-        .trade-side.offering h3 {
-            color: #ff6b6b;
-        }
-
-        .trade-side.receiving h3 {
-            color: #51cf66;
-        }
-
-        .trade-items {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .trade-item-row {
-            display: flex;
-            gap: 10px;
-            align-items: flex-end;
-        }
-
-        .trade-item-input {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .trade-item-input input {
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 13px;
-        }
-
-        .trade-item-input label {
-            font-size: 12px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .add-item-btn {
-            padding: 10px 15px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-
-        .add-item-btn:hover {
-            background: #764ba2;
-        }
-
-        .trade-item-card {
-            background: white;
-            padding: 12px;
-            border-radius: 6px;
-            border-left: 4px solid #667eea;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .trade-item-card.offering {
-            border-left-color: #ff6b6b;
-        }
-
-        .trade-item-card.receiving {
-            border-left-color: #51cf66;
-        }
-
-        .trade-item-info {
-            flex: 1;
-        }
-
-        .trade-item-name {
-            font-weight: bold;
-            color: #333;
-            font-size: 14px;
-            margin-bottom: 4px;
-        }
-
-        .trade-item-value {
-            font-size: 12px;
-            color: #666;
-        }
-
-        .trade-item-total {
-            font-weight: bold;
-            color: #667eea;
-            font-size: 14px;
-            min-width: 80px;
-            text-align: right;
-        }
-
-        .remove-item-btn {
-            background: #ff6b6b;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 6px 10px;
-            cursor: pointer;
-            font-size: 12px;
-            margin-left: 10px;
-            transition: background 0.3s;
-        }
-
-        .remove-item-btn:hover {
-            background: #ff5252;
-        }
-
-        .trade-summary {
-            background: white;
-            border: 2px solid #667eea;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-        }
-
-        .trade-summary-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
-            font-size: 14px;
-        }
-
-        .trade-summary-row:last-child {
-            border-bottom: none;
-        }
-
-        .trade-summary-label {
-            color: #666;
-            font-weight: bold;
-        }
-
-        .trade-summary-value {
-            color: #667eea;
-            font-weight: bold;
-        }
-
-        .trade-verdict {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 15px;
             text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
         }
 
-        .trade-verdict.fair {
-            background: #e7f5ff;
-            color: #1971c2;
-            border: 2px solid #74c0fc;
+        .tool-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+            transform: translateY(-5px);
         }
 
-        .trade-verdict.profitable {
-            background: #f0fdf4;
-            color: #22863a;
-            border: 2px solid #34d399;
+        .tool-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+            display: block;
         }
 
-        .trade-verdict.loss {
-            background: #fef2f2;
-            color: #b42318;
-            border: 2px solid #fca5a5;
+        .tool-card h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 22px;
         }
 
-        .trade-verdict-text {
-            margin-bottom: 5px;
+        .tool-card p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
         }
 
-        .trade-verdict-detail {
-            font-size: 13px;
-            font-weight: normal;
-            opacity: 0.9;
+        .tool-card:hover h2 {
+            color: #667eea;
         }
 
-        @media (max-width: 768px) {
-            .trading-container {
+        .coming-soon {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .coming-soon:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: #ddd;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .badge.soon {
+            background: #999;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 36px;
+            }
+
+            .tools-grid {
                 grid-template-columns: 1fr;
             }
 
-            .tabs {
-                flex-wrap: wrap;
-            }
-
-            .tab-button {
-                flex: 1;
-                text-align: center;
+            .content {
+                padding: 30px 20px;
             }
         }
     </style>
@@ -552,1022 +142,55 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>⛏️ Minecraft Item Value Calculator</h1>
-            <p>Calculate the total value of your items in emeralds</p>
+            <h1>⛏️ Minecraft Tools</h1>
+            <p>All your Minecraft calculation needs in one place</p>
         </div>
 
         <div class="content">
-            <div class="tabs">
-                <button class="tab-button active" onclick="switchTab('calculator')">🧮 Item Calculator</button>
-                <button class="tab-button" onclick="switchTab('trading')">🤝 Trade Analyzer</button>
-            </div>
+            <div class="tools-grid">
+                <a href="ValueCalculator/" class="tool-card">
+                    <span class="tool-icon">💎</span>
+                    <h2>Value Calculator</h2>
+                    <p>Calculate item values and analyze trades to see if deals are fair</p>
+                    <span class="badge">Active</span>
+                </a>
 
-            <!-- Calculator Tab -->
-            <div id="calculator" class="tab-content active">
-                <div class="search-section">
-                    <h3 style="margin-bottom: 15px;">Search for an Item</h3>
-                    <div class="search-box">
-                        <input type="text" id="searchInput" placeholder="Search items (e.g., 'diamond', 'iron ingot')...">
-                        <button onclick="searchItem()">Search</button>
-                    </div>
-                    <div class="suggestions" id="suggestions"></div>
+                <div class="tool-card coming-soon">
+                    <span class="tool-icon">⚒️</span>
+                    <h2>Enchantment Calculator</h2>
+                    <p>Figure out the best enchantment combinations for your gear</p>
+                    <span class="badge soon">Coming Soon</span>
                 </div>
 
-                <div class="calculator-section">
-                    <div class="error" id="errorMsg"></div>
-
-                    <div class="input-group">
-                        <div class="input-field" style="flex: 2;">
-                            <label for="itemSelect">Selected Item:</label>
-                            <input type="text" id="itemSelect" placeholder="Item name" readonly>
-                        </div>
-                        <div class="input-field">
-                            <label for="priceInput">Price per Item:</label>
-                            <input type="number" id="priceInput" placeholder="0" readonly>
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <div class="input-field" style="flex: 1; min-width: 150px;">
-                            <label for="stackInput">Stacks:</label>
-                            <input type="number" id="stackInput" placeholder="0" value="0" min="0">
-                        </div>
-                        <div class="input-field" style="flex: 1; min-width: 150px;">
-                            <label for="individualInput">Individual:</label>
-                            <input type="number" id="individualInput" placeholder="0" value="0" min="0" max="63">
-                        </div>
-                        <button class="calc-button" onclick="calculateValue()">Calculate Value</button>
-                    </div>
+                <div class="tool-card coming-soon">
+                    <span class="tool-icon">🏗️</span>
+                    <h2>Building Helper</h2>
+                    <p>Calculate materials needed for your builds</p>
+                    <span class="badge soon">Coming Soon</span>
                 </div>
 
-                <div class="results" id="results">
-                    <div class="result-row">
-                        <span class="result-label">Item:</span>
-                        <span class="result-value" id="resultItem">-</span>
-                    </div>
-                    <div class="result-row">
-                        <span class="result-label">Unit Price:</span>
-                        <span class="result-value" id="resultUnitPrice">-</span>
-                    </div>
-                    <div class="result-row">
-                        <span class="result-label">Quantity:</span>
-                        <span class="result-value" id="resultQuantity">-</span>
-                    </div>
-                    <div class="total-row">
-                        <span class="total-label">Total Value:</span>
-                        <span class="total-value" id="resultTotal">-</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Trading Tab -->
-            <div id="trading" class="tab-content">
-                <div class="trading-container">
-                    <!-- Offering Side -->
-                    <div class="trade-side offering">
-                        <h3>📤 Offering (Giving Away)</h3>
-                        <div class="search-box">
-                            <input type="text" id="offeringSearch" placeholder="Search items...">
-                            <button onclick="searchOfferingItem()">Search</button>
-                        </div>
-                        <div class="suggestions" id="offeringSuggestions"></div>
-                        
-                        <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
-                            <div class="trade-item-input" style="flex: 1; min-width: 120px;">
-                                <label>Stacks:</label>
-                                <input type="number" id="offeringStacks" placeholder="0" value="0" min="0">
-                            </div>
-                            <div class="trade-item-input" style="flex: 1; min-width: 120px;">
-                                <label>Individual:</label>
-                                <input type="number" id="offeringIndividual" placeholder="0" value="0" min="0" max="63">
-                            </div>
-                            <button class="add-item-btn" onclick="addOfferingItem()" style="align-self: flex-end; margin-top: 20px;">+ Add Item</button>
-                        </div>
-
-                        <div id="offeringList" class="trade-items" style="margin-top: 20px;"></div>
-                        
-                        <div class="trade-summary">
-                            <div class="trade-summary-row">
-                                <span class="trade-summary-label">Total Offering Value:</span>
-                                <span class="trade-summary-value" id="offeringTotal">0 💚</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Receiving Side -->
-                    <div class="trade-side receiving">
-                        <h3>📥 Receiving (Getting)</h3>
-                        <div class="search-box">
-                            <input type="text" id="receivingSearch" placeholder="Search items...">
-                            <button onclick="searchReceivingItem()">Search</button>
-                        </div>
-                        <div class="suggestions" id="receivingSuggestions"></div>
-                        
-                        <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
-                            <div class="trade-item-input" style="flex: 1; min-width: 120px;">
-                                <label>Stacks:</label>
-                                <input type="number" id="receivingStacks" placeholder="0" value="0" min="0">
-                            </div>
-                            <div class="trade-item-input" style="flex: 1; min-width: 120px;">
-                                <label>Individual:</label>
-                                <input type="number" id="receivingIndividual" placeholder="0" value="0" min="0" max="63">
-                            </div>
-                            <button class="add-item-btn" onclick="addReceivingItem()" style="align-self: flex-end; margin-top: 20px;">+ Add Item</button>
-                        </div>
-
-                        <div id="receivingList" class="trade-items" style="margin-top: 20px;"></div>
-                        
-                        <div class="trade-summary">
-                            <div class="trade-summary-row">
-                                <span class="trade-summary-label">Total Receiving Value:</span>
-                                <span class="trade-summary-value" id="receivingTotal">0 💚</span>
-                            </div>
-                        </div>
-                    </div>
+                <div class="tool-card coming-soon">
+                    <span class="tool-icon">📊</span>
+                    <h2>Farm Calculator</h2>
+                    <p>Estimate yields and efficiency for your farms</p>
+                    <span class="badge soon">Coming Soon</span>
                 </div>
 
-                <div class="trade-verdict" id="verdict" style="display: none;">
-                    <div class="trade-verdict-text" id="verdictText"></div>
-                    <div class="trade-verdict-detail" id="verdictDetail"></div>
+                <div class="tool-card coming-soon">
+                    <span class="tool-icon">🗺️</span>
+                    <h2>Distance Calculator</h2>
+                    <p>Calculate travel times and coordinates</p>
+                    <span class="badge soon">Coming Soon</span>
+                </div>
+
+                <div class="tool-card coming-soon">
+                    <span class="tool-icon">⚡</span>
+                    <h2>Redstone Guide</h2>
+                    <p>Learn about redstone mechanics and build guides</p>
+                    <span class="badge soon">Coming Soon</span>
                 </div>
             </div>
         </div>
     </div>
-
-    <script>
-        // Complete item database from the spreadsheet with both prices
-        const itemDatabase = {
-            // Raw Materials - format: [individual price, stack price]
-            "coal": [6, 384],
-            "coal ore": [10, 640],
-            "block of coal": [54, 3456],
-            "iron ingot": [10, 640],
-            "iron ore": [8, 512],
-            "iron block": [90, 5760],
-            "gold ingot": [20, 1280],
-            "gold ore": [18, 1152],
-            "gold block": [180, 11520],
-            "diamond gem": [1600, 102400],
-            "diamond ore": [6400, 409600],
-            "diamond block": [14400, 921600],
-            "lapis lazuli dye": [8, 512],
-            "lapis lazuli": [30, 1920],
-            "lapis lazuli block": [270, 17280],
-            "emerald": [100, 6400],
-            "emerald ore": [400, 25600],
-            "block of emerald": [900, 57600],
-            "nether quartz": [4, 256],
-            "nether quartz ore": [8, 512],
-            "block of quartz": [16, 1024],
-            "redstone dust": [3, 192],
-            "redstone ore": [5, 320],
-            "block of redstone": [27, 1728],
-            "glowstone dust": [12, 768],
-            "glowstone block": [48, 3072],
-            "netherite scrap": [3200, 204800],
-            "netherite ingot": [12800, 819200],
-            "ancient debris": [3200, 204800],
-            "netherite block": [115200, 7372800],
-            "nether gold ore": [20, 1280],
-            "gilded blackstone": [20, 1280],
-            "dirt": [1, 64],
-            "grass": [3, 192],
-            "cobblestone": [1, 64],
-            "stone": [2, 128],
-            "gravel": [2, 128],
-            "sand": [4, 256],
-            "mossy cobble": [5, 320],
-            "snowball": [1, 64],
-            "snow block": [4, 256],
-            "clay ball": [2, 128],
-            "clay block": [8, 512],
-            "ice": [10, 640],
-            "obsidian": [14, 896],
-            "endstone": [8, 512],
-            "netherrack": [1, 64],
-            "soul sand": [8, 512],
-            "mycelium": [15, 960],
-            "wool white": [4, 256],
-            "wool coloured": [4, 256],
-            
-            // Blocks & Craftables
-            "cobblestone slab": [1, 64],
-            "cobblestone steps": [1, 64],
-            "stone slab": [3, 192],
-            "cobblestone fence": [3, 192],
-            "mossy cobblestone fence": [4, 256],
-            "sandstone": [4, 256],
-            "sandstone slab": [3, 192],
-            "sandstone steps": [3, 192],
-            "decorative sandstone": [4, 256],
-            "smooth sandstone": [4, 256],
-            "stone brick": [3, 192],
-            "stone brick slab": [3, 192],
-            "stone brick steps": [3, 192],
-            "mossy stone bricks": [4, 256],
-            "cracked stone bricks": [4, 256],
-            "chiseled stone block": [3, 192],
-            "red bricks": [3, 192],
-            "red brick steps": [3, 192],
-            "red brick slab": [3, 192],
-            "clay item": [2, 128],
-            "nether brick": [3, 192],
-            "nether bricks": [12, 768],
-            "nether brick slab": [12, 768],
-            "nether brick steps": [12, 768],
-            "quartz slab": [16, 1024],
-            "quartz steps": [16, 1024],
-            "quartz block pillar": [16, 1024],
-            "quartz block chiseled": [16, 1024],
-            "barrels": [6, 384],
-            "bells": [18, 1152],
-            "blast furnaces": [15, 960],
-            "campfires": [8, 512],
-            "cartography tables": [10, 640],
-            "composter": [6, 384],
-            "fletching tables": [6, 384],
-            "grindstones": [8, 512],
-            "lanterns": [12, 768],
-            "lecterns": [10, 640],
-            "looms": [8, 512],
-            "scaffolding": [10, 640],
-            "smithing tables": [12, 768],
-            "smokers": [6, 384],
-            "stonecutters": [6, 384],
-            "slime block": [162, 10368],
-            "magma blocks": [14, 896],
-            "bone blocks": [18, 1152],
-            "crying obsidian": [16, 1024],
-            "basalt": [15, 960],
-            "blackstone": [15, 960],
-            "blackstone slab": [7, 448],
-            "beehives": [15, 960],
-            "bee nests": [12, 768],
-            "honey block": [12, 768],
-            "honeycomb block": [8, 512],
-            "tnt": [50, 3200],
-            "concrete": [14, 896],
-            "concrete powder": [12, 768],
-            "glazed terracotta": [12, 768],
-            "soul soil": [8, 512],
-            "crafting table": [4, 256],
-            "furnace": [18, 1152],
-            "chest": [9, 576],
-            "trapped chest": [25, 1600],
-            "ender chest": [140, 8960],
-            "hopper": [100, 6400],
-            "dispenser": [35, 2240],
-            "jukebox": [180, 11520],
-            "note block": [25, 1600],
-            "anvil": [465, 29760],
-            "cauldron": [100, 6400],
-            "enchantment table": [150, 9600],
-            "bookshelf": [66, 4224],
-            "glass": [3, 192],
-            "glass pane": [2, 128],
-            "iron bars": [60, 3840],
-            "fence": [3, 192],
-            "fence gate": [8, 512],
-            "nether fence": [24, 1536],
-            "sign": [4, 256],
-            "ladders": [2, 128],
-            "painting": [14, 896],
-            "item frame": [15, 960],
-            "bed": [20, 1280],
-            "carpet": [3, 192],
-            
-            // Plants & Wood
-            "logs oak": [8, 512],
-            "logs spruce": [8, 512],
-            "logs birch": [8, 512],
-            "logs jungle": [8, 512],
-            "wood planks oak": [2, 128],
-            "wood slab oak": [2, 128],
-            "wood steps oak": [3, 192],
-            "leaves": [1, 64],
-            "sapling": [15, 960],
-            "dandelion": [2, 128],
-            "rose": [2, 128],
-            "tall grass": [2, 128],
-            "fern": [1, 64],
-            "dead shrub": [1, 64],
-            "vines": [1, 64],
-            "cactus": [3, 192],
-            "lily pad": [4, 256],
-            "coral block": [16, 1024],
-            "coral fans": [4, 256],
-            "dead coral block": [8, 512],
-            "dead coral fan": [2, 128],
-            "kelp": [2, 128],
-            "dried kelp block": [27, 1728],
-            "dried kelp": [3, 192],
-            "sea pickle": [8, 512],
-            "mushroom block": [20, 1280],
-            "mushroom stem": [20, 1280],
-            "bamboo": [5, 320],
-            "sweet berry bush": [5, 320],
-            "warped fungi": [8, 512],
-            "crimson nylium": [8, 512],
-            "warped nylium": [10, 640],
-            "crimson planks": [14, 896],
-            "warped planks": [14, 896],
-            "crimson roots": [8, 512],
-            "warped roots": [8, 512],
-            "crimson stems": [8, 512],
-            "warped stems": [8, 512],
-            "shroomlight": [18, 1152],
-            "twisting vines": [8, 512],
-            "warped wart block": [10, 640],
-            "nether wart blocks": [10, 640],
-            "chorus flower": [50, 3200],
-            "chorus plants": [14, 896],
-            "chorus fruit": [7, 448],
-            "sponge": [30, 1920],
-            "wet sponge": [28, 1792],
-            
-            // Food & Seeds
-            "chicken raw": [4, 256],
-            "chicken cooked": [6, 384],
-            "porkchop raw": [4, 256],
-            "porkchop cooked": [6, 384],
-            "beef raw": [4, 256],
-            "beef cooked": [6, 384],
-            "steak": [6, 384],
-            "fish raw": [4, 256],
-            "fish cooked": [6, 384],
-            "pufferfish": [1, 64],
-            "potato raw": [3, 192],
-            "baked potato": [4, 256],
-            "poisonous potato": [1, 64],
-            "carrot": [3, 192],
-            "red apple": [3, 192],
-            "golden apple": [165, 10560],
-            "melon slice": [1, 64],
-            "melon block": [9, 576],
-            "pumpkin": [3, 192],
-            "brown mushroom": [3, 192],
-            "red mushroom": [3, 192],
-            "mushroom stew": [6, 384],
-            "bread": [6, 384],
-            "cookie": [1, 64],
-            "pumpkin pie": [6, 384],
-            "cake": [6, 384],
-            "seeds": [2, 128],
-            "melon seeds": [2, 128],
-            "pumpkin seeds": [3, 192],
-            "cocoa beans": [2, 128],
-            "wheat": [1, 64],
-            "sugar cane": [3, 192],
-            "sugar": [3, 192],
-            "egg": [2, 128],
-            "milk": [5, 320],
-            "hay bale": [9, 576],
-            "glistering melon": [25, 1600],
-            "enchanted golden apple": [200, 12800],
-            "suspicious stew": [18, 1152],
-            "honey bottles": [8, 512],
-            
-            // Drops
-            "flint": [1, 64],
-            "gunpowder": [4, 256],
-            "gold nugget": [2, 128],
-            "leather": [4, 256],
-            "feather": [3, 192],
-            "bone": [6, 384],
-            "bone meal": [2, 128],
-            "string": [4, 256],
-            "rotten flesh": [1, 64],
-            "spider eye": [6, 384],
-            "fermented spider eye": [18, 1152],
-            "slimeball": [18, 1152],
-            "ender pearl": [10, 640],
-            "eye of ender": [35, 2240],
-            "blaze rod": [50, 3200],
-            "blaze powder": [25, 1600],
-            "magma cream": [50, 3200],
-            "ghast tear": [150, 9600],
-            "scutes": [15, 960],
-            "phantom membranes": [16, 1024],
-            "nautilus shells": [25, 1600],
-            
-            // Redstone Stuff
-            "redstone torch": [5, 320],
-            "lever": [2, 128],
-            "wooden button": [2, 128],
-            "stone button": [2, 128],
-            "wooden pressure plate": [4, 256],
-            "stone pressure plate": [4, 256],
-            "weighted pressure plate light": [20, 1280],
-            "weighted pressure plate heavy": [40, 2560],
-            "trapdoor": [6, 384],
-            "wooden door": [6, 384],
-            "iron door": [60, 3840],
-            "piston": [30, 1920],
-            "sticky piston": [55, 3520],
-            "tripwire hook": [10, 640],
-            "daylight sensor": [50, 3200],
-            "redstone lamp": [35, 2240],
-            "redstone repeater": [25, 1600],
-            "redstone comparator": [30, 1920],
-            "target": [15, 960],
-            "observer": [14, 896],
-            "dropper": [12, 768],
-            
-            // Dyes
-            "dandelion yellow": [2, 128],
-            "bonemeal white": [2, 128],
-            "orange dye": [2, 128],
-            "rose red": [2, 128],
-            "lime dye": [3, 192],
-            "cactus green": [4, 256],
-            "pink dye": [2, 128],
-            "magenta dye": [4, 256],
-            "purple dye": [5, 320],
-            "lapis blue": [8, 512],
-            "cyan dye": [6, 384],
-            "light blue dye": [5, 320],
-            "light gray dye": [5, 320],
-            "gray dye": [6, 384],
-            "ink sac black": [10, 640],
-            "cocoa brown": [2, 128],
-            
-            // Brewing
-            "brewing stand": [55, 3520],
-            "nether wart seeds": [25, 1600],
-            "glass bottle": [3, 192],
-            "potion default": [20, 1280],
-            "potion extended": [45, 2880],
-            "potion doubled": [80, 5120],
-            "splash potion default": [25, 1600],
-            "splash potion extended": [50, 3200],
-            "splash potion doubled": [85, 5440],
-            "lingering potion default": [30, 1920],
-            "lingering potion extended": [55, 3520],
-            "lingering potion doubled": [90, 5760],
-            
-            // Misc
-            "stick": [1, 64],
-            "torch": [7, 448],
-            "paper": [2, 128],
-            "rails": [6, 384],
-            "powered rail": [63, 4032],
-            "detector rail": [66, 4224],
-            "activator rail": [65, 4160],
-            "minecart": [80, 5120],
-            "lava bucket": [61, 3904],
-            "leash": [20, 1280],
-            "saddle": [250, 16000],
-            "boat": [10, 640],
-            "book": [20, 1280],
-            "book and quill": [35, 2240],
-            "bowl": [2, 128],
-            "bucket": [36, 2304],
-            "flower pot": [12, 768],
-            "prismarine": [10, 640],
-            "shulker boxes": [120, 7680],
-            "blue ice": [10, 640],
-            "bucket of fish": [51, 3264],
-            "heart of the sea": [20, 1280],
-            "chain": [12, 768],
-            "lodestone": [12820, 820480],
-            "respawn anchor": [35, 2240],
-            "soul campfire": [10, 640],
-            "soul lantern": [14, 896],
-            "soul torch": [6, 384],
-            "music discs": [40, 2560],
-            "dragon egg": [1000000, 64000000],
-            "end crystal": [5000, 320000],
-            "elytra": [900000, 57600000],
-            "dragon head": [590000, 37760000],
-            "end rods": [30, 1920],
-            "dragon breath": [20, 1280],
-            "sea lantern": [100, 6400],
-            "prismarine crystals": [10, 640],
-            "prismarine shard": [10, 640],
-            "conduit": [5000, 320000],
-            "end portal frame": [100000, 6400000],
-            "beacon": [80000, 5120000],
-            "player head": [500, 32000],
-            "turtle eggs": [95000, 6080000],
-            
-            // Spawn eggs
-            "bat": [50000, 3200000],
-            "cat": [80000, 5120000],
-            "chicken": [100000, 6400000],
-            "fish": [50000, 3200000],
-            "cow": [120000, 7680000],
-            "donkey": [80000, 5120000],
-            "fox": [60000, 3840000],
-            "horse": [70000, 4480000],
-            "mooshroom": [150000, 9600000],
-            "mule": [85000, 5440000],
-            "ocelot": [80000, 5120000],
-            "parrot": [40000, 2560000],
-            "pig": [110000, 7040000],
-            "polar bear": [160000, 10240000],
-            "rabbit": [95000, 6080000],
-            "sheep": [110000, 7040000],
-            "skeleton horse": [80000, 5120000],
-            "squid": [80000, 5120000],
-            "strider": [95000, 6080000],
-            "turtle": [95000, 6080000],
-            "villager": [150000, 9600000],
-            "wandering trader": [145000, 9280000],
-            "bee": [95000, 6080000],
-            "dolphin": [120000, 7680000],
-            "llama": [100000, 6400000],
-            "panda": [100000, 6400000],
-            "wolf": [80000, 5120000],
-            "cave spider": [125000, 8000000],
-            "spider": [120000, 7680000],
-            "piglin": [160000, 10240000],
-            "zombified piglin": [155000, 9920000],
-            "enderman": [170000, 10880000],
-            "blaze": [170000, 10880000],
-            "creeper": [170000, 10880000],
-            "drowned": [165000, 10560000],
-            "elder guardian": [250000, 16000000],
-            "endermite": [160000, 10240000],
-            "evoker": [180000, 11520000],
-            "ghast": [190000, 12160000],
-            "guardian": [200000, 12800000],
-            "hoglin": [165000, 10560000],
-            "husk": [170000, 10880000],
-            "magma cube": [175000, 11200000],
-            "phantom": [165000, 10560000],
-            "pillager": [175000, 11200000],
-            "ravager": [180000, 11520000],
-            "shulker": [230000, 14720000],
-            "silverfish": [165000, 10560000],
-            "skeleton": [170000, 10880000],
-            "slime": [210000, 13440000],
-            "stray": [195000, 12480000],
-            "vex": [200000, 12800000],
-            "vindicator": [180000, 11520000],
-            "witch": [195000, 12480000],
-            "wither skeleton": [245000, 15680000],
-            "zoglin": [185000, 11840000],
-            "zombie": [170000, 10880000],
-            "zombie villager": [235000, 15040000],
-            
-            // Tools
-            "bow": [20, 1280],
-            "arrow": [3, 192],
-            "fishing rod": [10, 640],
-            "shears": [24, 1536],
-            "flint and steel": [20, 1280],
-            "compass": [65, 4160],
-            "clock": [165, 10560],
-            
-            // Weapons & Armor
-            "leather sword": [15, 960],
-            "leather pickaxe": [30, 1920],
-            "leather axe": [30, 1920],
-            "leather shovel": [15, 960],
-            "leather hoe": [25, 1600],
-            "leather helmet": [20, 1280],
-            "leather chestplate": [32, 2048],
-            "leather leggings": [28, 1792],
-            "leather boots": [16, 1024],
-            
-            "chain sword": [22, 1408],
-            "chain pickaxe": [32, 2048],
-            "chain axe": [32, 2048],
-            "chain shovel": [12, 768],
-            "chain hoe": [22, 1408],
-            "chain helmet": [25, 1600],
-            "chain chestplate": [40, 2560],
-            "chain leggings": [35, 2240],
-            "chain boots": [20, 1280],
-            
-            "iron sword": [42, 2688],
-            "iron pickaxe": [62, 3968],
-            "iron axe": [62, 3968],
-            "iron shovel": [22, 1408],
-            "iron hoe": [42, 2688],
-            "iron helmet": [50, 3200],
-            "iron chestplate": [80, 5120],
-            "iron leggings": [70, 4480],
-            "iron boots": [40, 2560],
-            
-            "gold sword": [42, 2688],
-            "gold pickaxe": [62, 3968],
-            "gold axe": [62, 3968],
-            "gold shovel": [22, 1408],
-            "gold hoe": [42, 2688],
-            "gold helmet": [100, 6400],
-            "gold chestplate": [160, 10240],
-            "gold leggings": [140, 8960],
-            "gold boots": [80, 5120],
-            
-            "diamond sword": [3202, 204928],
-            "diamond pickaxe": [4802, 307328],
-            "diamond axe": [4802, 307328],
-            "diamond shovel": [1602, 102528],
-            "diamond hoe": [3202, 204928],
-            "diamond helmet": [8000, 512000],
-            "diamond chestplate": [12800, 819200],
-            "diamond leggings": [11200, 716800],
-            "diamond boots": [6400, 409600],
-            
-            "netherite sword": [25602, 1638528],
-            "netherite pickaxe": [38400, 2457600],
-            "netherite axe": [38400, 2457600],
-            "netherite shovel": [12802, 819328],
-            "netherite hoe": [25602, 1638528],
-            "netherite helmet": [64000, 4096000],
-            "netherite chestplate": [102400, 6553600],
-            "netherite leggings": [89600, 5734400],
-            "netherite boots": [51200, 3276800],
-            
-            "turtle helmet": [75, 4800]
-        };
-
-        let selectedItem = null;
-        let selectedStackPrice = 0;
-        let selectedIndividualPrice = 0;
-        
-        let selectedOfferingItem = null;
-        let selectedOfferingStackPrice = 0;
-        let selectedOfferingIndividualPrice = 0;
-        
-        let selectedReceivingItem = null;
-        let selectedReceivingStackPrice = 0;
-        let selectedReceivingIndividualPrice = 0;
-        
-        let offeringItems = [];
-        let receivingItems = [];
-
-        function switchTab(tabName) {
-            // Hide all tabs
-            document.getElementById('calculator').classList.remove('active');
-            document.getElementById('trading').classList.remove('active');
-            
-            // Remove active from all buttons
-            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-            
-            // Show selected tab
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        function searchItem() {
-            const query = document.getElementById('searchInput').value.toLowerCase().trim();
-            const suggestionsDiv = document.getElementById('suggestions');
-            const errorMsg = document.getElementById('errorMsg');
-
-            if (!query) {
-                suggestionsDiv.innerHTML = '';
-                errorMsg.classList.remove('show');
-                return;
-            }
-
-            const matches = Object.keys(itemDatabase).filter(item =>
-                item.includes(query)
-            ).slice(0, 15);
-
-            if (matches.length === 0) {
-                suggestionsDiv.innerHTML = '<div style="width: 100%; padding: 10px; text-align: center; color: #999;">No items found</div>';
-                errorMsg.classList.remove('show');
-            } else {
-                suggestionsDiv.innerHTML = matches.map(item =>
-                    `<div class="suggestion-item" onclick="selectItem('${item}')">${item}</div>`
-                ).join('');
-                errorMsg.classList.remove('show');
-            }
-        }
-
-        function selectItem(item) {
-            selectedItem = item;
-            const prices = itemDatabase[item];
-            selectedStackPrice = prices[1];
-            selectedIndividualPrice = prices[0];
-            
-            document.getElementById('itemSelect').value = item.charAt(0).toUpperCase() + item.slice(1);
-            document.getElementById('priceInput').value = selectedIndividualPrice + ' (individual) / ' + selectedStackPrice + ' (stack)';
-            document.getElementById('searchInput').value = '';
-            document.getElementById('suggestions').innerHTML = '';
-            document.getElementById('stackInput').value = '0';
-            document.getElementById('individualInput').value = '0';
-        }
-
-        function calculateValue() {
-            const errorMsg = document.getElementById('errorMsg');
-            const resultsDiv = document.getElementById('results');
-            
-            if (!selectedItem) {
-                errorMsg.textContent = '❌ Please select an item first';
-                errorMsg.classList.add('show');
-                resultsDiv.classList.remove('show');
-                return;
-            }
-
-            const stacks = parseInt(document.getElementById('stackInput').value) || 0;
-            const individuals = parseInt(document.getElementById('individualInput').value) || 0;
-            
-            if (stacks < 0 || individuals < 0 || individuals > 63) {
-                errorMsg.textContent = '❌ Please enter valid quantities (0-63 for individual items)';
-                errorMsg.classList.add('show');
-                resultsDiv.classList.remove('show');
-                return;
-            }
-
-            if (stacks === 0 && individuals === 0) {
-                errorMsg.textContent = '❌ Please enter at least one item';
-                errorMsg.classList.add('show');
-                resultsDiv.classList.remove('show');
-                return;
-            }
-
-            errorMsg.classList.remove('show');
-            
-            const total = (stacks * selectedStackPrice) + (individuals * selectedIndividualPrice);
-            const totalItems = (stacks * 64) + individuals;
-
-            document.getElementById('resultItem').textContent = selectedItem.charAt(0).toUpperCase() + selectedItem.slice(1);
-            document.getElementById('resultUnitPrice').textContent = selectedIndividualPrice.toLocaleString() + ' 💚 (each) / ' + selectedStackPrice.toLocaleString() + ' 💚 (stack)';
-            document.getElementById('resultQuantity').textContent = stacks + ' stacks + ' + individuals + ' = ' + totalItems + ' total items';
-            document.getElementById('resultTotal').textContent = total.toLocaleString() + ' 💚';
-
-            resultsDiv.classList.add('show');
-        }
-
-        // Allow Enter key to search
-        document.getElementById('searchInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') searchItem();
-        });
-
-        // Allow Enter key to calculate
-        document.getElementById('quantityInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') calculateValue();
-        });
-
-        // Initial suggestions showing categories
-        window.addEventListener('load', () => {
-            const suggestionsDiv = document.getElementById('suggestions');
-            suggestionsDiv.innerHTML = `
-                <div style="width: 100%; text-align: center; color: #999; font-size: 13px;">
-                    Try searching: "diamond", "netherite", "iron", "emerald", "golden apple"...
-                </div>
-            `;
-        });
-
-        // ==================== TRADING SYSTEM ====================
-
-        function searchOfferingItem() {
-            const query = document.getElementById('offeringSearch').value.toLowerCase().trim();
-            const suggestionsDiv = document.getElementById('offeringSuggestions');
-
-            if (!query) {
-                suggestionsDiv.innerHTML = '';
-                return;
-            }
-
-            const matches = Object.keys(itemDatabase).filter(item =>
-                item.includes(query)
-            ).slice(0, 10);
-
-            if (matches.length === 0) {
-                suggestionsDiv.innerHTML = '<div style="width: 100%; padding: 10px; text-align: center; color: #999; font-size: 12px;">No items found</div>';
-            } else {
-                suggestionsDiv.innerHTML = matches.map(item =>
-                    `<div class="suggestion-item" onclick="selectOfferingItem('${item}')">${item}</div>`
-                ).join('');
-            }
-        }
-
-        function selectOfferingItem(item) {
-            selectedOfferingItem = item;
-            const prices = itemDatabase[item];
-            selectedOfferingStackPrice = prices[1];
-            selectedOfferingIndividualPrice = prices[0];
-            
-            document.getElementById('offeringSearch').value = item.charAt(0).toUpperCase() + item.slice(1);
-            document.getElementById('offeringSuggestions').innerHTML = '';
-        }
-
-        function addOfferingItem() {
-            if (!selectedOfferingItem) {
-                alert('Please select an item first');
-                return;
-            }
-
-            const stacks = parseInt(document.getElementById('offeringStacks').value) || 0;
-            const individuals = parseInt(document.getElementById('offeringIndividual').value) || 0;
-            
-            if (stacks < 0 || individuals < 0 || individuals > 63) {
-                alert('Please enter valid quantities (0-63 for individual items)');
-                return;
-            }
-
-            if (stacks === 0 && individuals === 0) {
-                alert('Please enter at least one item');
-                return;
-            }
-
-            const totalItems = (stacks * 64) + individuals;
-            const totalValue = (stacks * selectedOfferingStackPrice) + (individuals * selectedOfferingIndividualPrice);
-
-            const itemObj = {
-                name: selectedOfferingItem,
-                stackPrice: selectedOfferingStackPrice,
-                individualPrice: selectedOfferingIndividualPrice,
-                stacks: stacks,
-                individuals: individuals,
-                totalItems: totalItems,
-                total: totalValue,
-                id: Date.now()
-            };
-
-            offeringItems.push(itemObj);
-            updateOfferingList();
-            
-            // Reset
-            selectedOfferingItem = null;
-            selectedOfferingStackPrice = 0;
-            selectedOfferingIndividualPrice = 0;
-            document.getElementById('offeringSearch').value = '';
-            document.getElementById('offeringStacks').value = '0';
-            document.getElementById('offeringIndividual').value = '0';
-        }
-
-        function removeOfferingItem(id) {
-            offeringItems = offeringItems.filter(item => item.id !== id);
-            updateOfferingList();
-        }
-
-        function updateOfferingList() {
-            const listDiv = document.getElementById('offeringList');
-            const totalDiv = document.getElementById('offeringTotal');
-
-            let total = 0;
-            listDiv.innerHTML = offeringItems.map(item => {
-                total += item.total;
-                return `
-                    <div class="trade-item-card offering">
-                        <div class="trade-item-info">
-                            <div class="trade-item-name">${item.name.charAt(0).toUpperCase() + item.name.slice(1)}</div>
-                            <div class="trade-item-value">${item.stacks}st + ${item.individuals} = ${item.totalItems} items</div>
-                            <div class="trade-item-value" style="font-size: 11px; opacity: 0.8;">${item.stacks}×${item.stackPrice} + ${item.individuals}×${item.individualPrice}</div>
-                        </div>
-                        <div class="trade-item-total">${item.total.toLocaleString()} 💚</div>
-                        <button class="remove-item-btn" onclick="removeOfferingItem(${item.id})">Remove</button>
-                    </div>
-                `;
-            }).join('');
-
-            totalDiv.textContent = total.toLocaleString() + ' 💚';
-            updateTradeVerdict();
-        }
-
-        function searchReceivingItem() {
-            const query = document.getElementById('receivingSearch').value.toLowerCase().trim();
-            const suggestionsDiv = document.getElementById('receivingSuggestions');
-
-            if (!query) {
-                suggestionsDiv.innerHTML = '';
-                return;
-            }
-
-            const matches = Object.keys(itemDatabase).filter(item =>
-                item.includes(query)
-            ).slice(0, 10);
-
-            if (matches.length === 0) {
-                suggestionsDiv.innerHTML = '<div style="width: 100%; padding: 10px; text-align: center; color: #999; font-size: 12px;">No items found</div>';
-            } else {
-                suggestionsDiv.innerHTML = matches.map(item =>
-                    `<div class="suggestion-item" onclick="selectReceivingItem('${item}')">${item}</div>`
-                ).join('');
-            }
-        }
-
-        function selectReceivingItem(item) {
-            selectedReceivingItem = item;
-            const prices = itemDatabase[item];
-            selectedReceivingStackPrice = prices[1];
-            selectedReceivingIndividualPrice = prices[0];
-            
-            document.getElementById('receivingSearch').value = item.charAt(0).toUpperCase() + item.slice(1);
-            document.getElementById('receivingSuggestions').innerHTML = '';
-        }
-
-        function addReceivingItem() {
-            if (!selectedReceivingItem) {
-                alert('Please select an item first');
-                return;
-            }
-
-            const stacks = parseInt(document.getElementById('receivingStacks').value) || 0;
-            const individuals = parseInt(document.getElementById('receivingIndividual').value) || 0;
-            
-            if (stacks < 0 || individuals < 0 || individuals > 63) {
-                alert('Please enter valid quantities (0-63 for individual items)');
-                return;
-            }
-
-            if (stacks === 0 && individuals === 0) {
-                alert('Please enter at least one item');
-                return;
-            }
-
-            const totalItems = (stacks * 64) + individuals;
-            const totalValue = (stacks * selectedReceivingStackPrice) + (individuals * selectedReceivingIndividualPrice);
-
-            const itemObj = {
-                name: selectedReceivingItem,
-                stackPrice: selectedReceivingStackPrice,
-                individualPrice: selectedReceivingIndividualPrice,
-                stacks: stacks,
-                individuals: individuals,
-                totalItems: totalItems,
-                total: totalValue,
-                id: Date.now()
-            };
-
-            receivingItems.push(itemObj);
-            updateReceivingList();
-            
-            // Reset
-            selectedReceivingItem = null;
-            selectedReceivingStackPrice = 0;
-            selectedReceivingIndividualPrice = 0;
-            document.getElementById('receivingSearch').value = '';
-            document.getElementById('receivingStacks').value = '0';
-            document.getElementById('receivingIndividual').value = '0';
-        }
-
-        function removeReceivingItem(id) {
-            receivingItems = receivingItems.filter(item => item.id !== id);
-            updateReceivingList();
-        }
-
-        function updateReceivingList() {
-            const listDiv = document.getElementById('receivingList');
-            const totalDiv = document.getElementById('receivingTotal');
-
-            let total = 0;
-            listDiv.innerHTML = receivingItems.map(item => {
-                total += item.total;
-                return `
-                    <div class="trade-item-card receiving">
-                        <div class="trade-item-info">
-                            <div class="trade-item-name">${item.name.charAt(0).toUpperCase() + item.name.slice(1)}</div>
-                            <div class="trade-item-value">${item.stacks}st + ${item.individuals} = ${item.totalItems} items</div>
-                            <div class="trade-item-value" style="font-size: 11px; opacity: 0.8;">${item.stacks}×${item.stackPrice} + ${item.individuals}×${item.individualPrice}</div>
-                        </div>
-                        <div class="trade-item-total">${item.total.toLocaleString()} 💚</div>
-                        <button class="remove-item-btn" onclick="removeReceivingItem(${item.id})">Remove</button>
-                    </div>
-                `;
-            }).join('');
-
-            totalDiv.textContent = total.toLocaleString() + ' 💚';
-            updateTradeVerdict();
-        }
-
-        function updateTradeVerdict() {
-            const offeringTotal = offeringItems.reduce((sum, item) => sum + item.total, 0);
-            const receivingTotal = receivingItems.reduce((sum, item) => sum + item.total, 0);
-            const verdictDiv = document.getElementById('verdict');
-            const verdictText = document.getElementById('verdictText');
-            const verdictDetail = document.getElementById('verdictDetail');
-
-            if (offeringTotal === 0 || receivingTotal === 0) {
-                verdictDiv.style.display = 'none';
-                return;
-            }
-
-            verdictDiv.style.display = 'block';
-            
-            const difference = receivingTotal - offeringTotal;
-            const percentDiff = ((difference / offeringTotal) * 100).toFixed(1);
-
-            verdictDiv.className = 'trade-verdict';
-            
-            if (Math.abs(difference) <= offeringTotal * 0.05) {
-                verdictDiv.classList.add('fair');
-                verdictText.textContent = '✅ Fair Trade';
-                verdictDetail.textContent = `Both sides are nearly equal (±5% difference)`;
-            } else if (difference > 0) {
-                verdictDiv.classList.add('profitable');
-                verdictText.textContent = '💰 Profitable Trade';
-                verdictDetail.textContent = `You gain ${difference.toLocaleString()} 💚 value (+${percentDiff}%)`;
-            } else {
-                verdictDiv.classList.add('loss');
-                verdictText.textContent = '⚠️ Trade Loss';
-                verdictDetail.textContent = `You lose ${Math.abs(difference).toLocaleString()} 💚 value (${percentDiff}%)`;
-            }
-        }
-
-        // Allow Enter key to search
-        document.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                if (e.target === document.getElementById('searchInput')) searchItem();
-                if (e.target === document.getElementById('offeringSearch')) searchOfferingItem();
-                if (e.target === document.getElementById('receivingSearch')) searchReceivingItem();
-            }
-        });
-    </script>
 </body>
 </html>
