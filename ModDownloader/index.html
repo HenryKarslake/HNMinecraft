@@ -340,7 +340,10 @@
                     <div class="status-info" id="fabricStatus" style="display: none;"></div>
                 </div>
             </div>
-            <div class="fabric-card">
+
+            <!-- Fabric API Section -->
+            <div class="section">
+                <div class="fabric-card">
                     <div class="fabric-header">
                         <div class="fabric-icon">🔧</div>
                         <div class="fabric-info">
@@ -354,15 +357,12 @@
                         This is needed to run fabric mods, without this, the mods will not work.
                     </div>
 
-                    <button class="download-btn" id="fabricBtn" onclick="downloadFile('fabric-api-0.158.0+26.2.jar', 'Fabric Loader')">
+                    <button class="download-btn" id="fabricApiBtn" onclick="downloadFile('fabric-api-0.158.0+26.2.jar', 'Fabric API')">
                         📥 Download Fabric API
                     </button>
 
-                    <div class="status-info" id="fabricStatus" style="display: none;"></div>
+                    <div class="status-info" id="fabricApiStatus" style="display: none;"></div>
                 </div>
-            </div>
-
-            <!-- Other Mods Section -->
             <div class="section">
                 <div class="section-title">📦 Other Mods</div>
                 
@@ -378,6 +378,10 @@
     </div>
 
     <script>
+        // Define your mods with their hardcoded filenames
+        const MODS = {
+            'QuickCoordChat': 'QuickCoordChat-1.0.0+fabric+26.2.jar'
+        };
 
         // Function to download a file
         async function downloadFile(filename, displayName) {
@@ -416,6 +420,8 @@
             
             if (displayName === 'Fabric Loader') {
                 statusEl = document.getElementById('fabricStatus');
+            } else if (displayName === 'Fabric API') {
+                statusEl = document.getElementById('fabricApiStatus');
             } else {
                 statusEl = document.getElementById('status-' + displayName.replace(/[^a-zA-Z0-9]/g, '-'));
             }
