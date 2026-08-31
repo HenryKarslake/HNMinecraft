@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Mod Downloader</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            position: relative;
+        }
+
+        .back-button {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateX(-5px);
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        /* Fabric Section - Main */
+        .fabric-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+            border: 3px solid #667eea;
+            border-radius: 10px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.15);
+        }
+
+        .fabric-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .fabric-icon {
+            font-size: 60px;
+        }
+
+        .fabric-info h2 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .fabric-info p {
+            color: #666;
+            font-size: 15px;
+        }
+
+        .badge-main {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .fabric-description {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            color: #555;
+            line-height: 1.6;
+            border-left: 4px solid #667eea;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px 32px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .download-btn:hover:not(:disabled) {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .download-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .status-info {
+            background: #e7f5ff;
+            border: 2px solid #74c0fc;
+            padding: 15px;
+            border-radius: 8px;
+            color: #1971c2;
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 20px;
+        }
+
+        .status-info.error {
+            background: #ffe0e0;
+            border-color: #ff9999;
+            color: #c92a2a;
+        }
+
+        .status-info.success {
+            background: #e6ffed;
+            border-color: #51cf66;
+            color: #2b8a3e;
+        }
+
+        /* Other Mods Section */
+        .mods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .mod-card {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .mod-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .mod-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .mod-card h3 {
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        .mod-card p {
+            color: #666;
+            font-size: 12px;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .mod-download-btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #51cf66;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .mod-download-btn:hover:not(:disabled) {
+            background: #37b24d;
+            transform: scale(1.05);
+        }
+
+        .mod-download-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .mod-status {
+            display: none;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            color: #999;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .fabric-card {
+                padding: 20px;
+            }
+
+            .fabric-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .fabric-icon {
+                font-size: 48px;
+            }
+
+            .mods-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="../" class="back-button">← Back to Hub</a>
+            <h1>🧩 Minecraft Mod Downloader</h1>
+            <p>Download your Minecraft mods with one click</p>
+        </div>
+
+        <div class="content">
+            <!-- Fabric Section - Main -->
+            <div class="section">
+                <div class="section-title">⭐ Featured: Fabric Loader</div>
+                
+                <div class="fabric-card">
+                    <div class="fabric-header">
+                        <div class="fabric-icon">🔧</div>
+                        <div class="fabric-info">
+                            <h2>Fabric Loader</h2>
+                            <p>The lightweight mod loader for Minecraft</p>
+                            <span class="badge-main">Main Mod Loader</span>
+                        </div>
+                    </div>
+
+                    <div class="fabric-description">
+                        You will run minecraft through fabric version, and fabric will run the mods.
+                    </div>
+
+                    <button class="download-btn" id="fabricBtn" onclick="downloadFile('fabric-installer-1.1.2.exe', 'Fabric Loader')">
+                        📥 Download Fabric Installer
+                    </button>
+
+                    <div class="status-info" id="fabricStatus" style="display: none;"></div>
+                </div>
+            </div>
+            <div class="fabric-card">
+                    <div class="fabric-header">
+                        <div class="fabric-icon">🔧</div>
+                        <div class="fabric-info">
+                            <h2>Fabric API</h2>
+                            <p>The API for the Fabric</p>
+                            <span class="badge-main">Fabric API</span>
+                        </div>
+                    </div>
+
+                    <div class="fabric-description">
+                        This is needed to run fabric mods, without this, the mods will not work.
+                    </div>
+
+                    <button class="download-btn" id="fabricBtn" onclick="downloadFile('fabric-api-0.11.2.jar', 'Fabric API')">
+                        📥 Download Fabric API
+                    </button>
+
+                    <div class="status-info" id="fabricStatus" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- Other Mods Section -->
+            <div class="section">
+                <div class="section-title">📦 Other Mods</div>
+                
+                <div class="mods-grid" id="modsContainer">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📂</div>
+                        <h3>Loading mods...</h3>
+                        <p>Reading mod list</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        // Function to download a file
+        async function downloadFile(filename, displayName) {
+            const downloadPath = 'downloads/' + filename;
+            
+            try {
+                // Try to fetch the file
+                const response = await fetch(downloadPath);
+                
+                if (!response.ok) {
+                    showStatus(displayName + ' not found in downloads folder', 'error', displayName);
+                    return;
+                }
+
+                // Create a blob and trigger download
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+
+                showStatus('✓ ' + displayName + ' downloaded successfully!', 'success', displayName);
+            } catch (error) {
+                showStatus('✗ Error downloading ' + displayName + '. File may not exist.', 'error', displayName);
+                console.error('Download error:', error);
+            }
+        }
+
+        // Show status message
+        function showStatus(message, type, displayName) {
+            let statusEl;
+            
+            if (displayName === 'Fabric Loader') {
+                statusEl = document.getElementById('fabricStatus');
+            } else {
+                statusEl = document.getElementById('status-' + displayName.replace(/[^a-zA-Z0-9]/g, '-'));
+            }
+            
+            if (statusEl) {
+                statusEl.textContent = message;
+                statusEl.className = 'status-info ' + type;
+                statusEl.style.display = 'block';
+                
+                // Auto-hide success messages after 4 seconds
+                if (type === 'success') {
+                    setTimeout(() => {
+                        statusEl.style.display = 'none';
+                    }, 4000);
+                }
+            }
+        }
+
+        // Initialize mods display
+        function initializeMods() {
+            const container = document.getElementById('modsContainer');
+            
+            if (Object.keys(MODS).length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📂</div>
+                        <h3>No mods available</h3>
+                        <p>Add mod files to the /downloads folder</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = Object.entries(MODS).map(([modName, filename]) => {
+                const safeId = modName.replace(/[^a-zA-Z0-9]/g, '-');
+                return `
+                    <div class="mod-card">
+                        <span class="mod-icon">📦</span>
+                        <h3>${modName}</h3>
+                        <p>${filename}</p>
+                        <button class="mod-download-btn" onclick="downloadFile('${filename}', '${modName}')">
+                            ⬇️ Download
+                        </button>
+                        <div class="status-info mod-status" id="status-${safeId}"></div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            initializeMods();
+        });
+    </script>
+</body>
+</html>
